@@ -28,5 +28,6 @@ public class Main {
 
 
         }
+        leitor.close();
     }
 }
