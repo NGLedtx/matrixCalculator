@@ -10,7 +10,7 @@ public class Matriz {
     public void preencher(Scanner leitor, char nomeMatriz){
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[i].length; j++) {
-                System.out.printf("Digite o valor da posição %c%d%d",Character.toLowerCase(nomeMatriz), i+1, j+1);
+                System.out.printf("Digite o valor da posição %c%d%d: ",Character.toLowerCase(nomeMatriz), i+1, j+1);
                 matriz[i][j] = Integer.parseInt(leitor.nextLine());
             }
         }
