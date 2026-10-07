@@ -2,6 +2,19 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+//#region -- Imprimir Lista de Matrizes Cadastradas
+    public static void imprimirMatrizes(ArrayList<Matriz> matrizes){
+        System.out.println("---------- MATRIZES CADASTRADAS ----------");
+        for (int i = 0; i < matrizes.size(); i++) {
+            System.out.printf("Matriz " +(char) ('A' + i) + ": \n");
+
+                        matrizes.get(i).imprimir();
+                        
+                        System.out.println();
+        }
+        System.out.println("----------------------------------------");
+    }
+//#endregion    
     public static void main(String[] args) {
        
         Scanner leitor = new Scanner(System.in);
@@ -62,17 +75,43 @@ public class Main {
                     System.out.println("\n---------- MATRIZES CADASTRADAS ----------");
                     for (int i = 0; i < matrizes.size(); i++) {
 
-                        System.out.printf("Matriz " +(char) ('A' + i) + ": \n");
-
-                        matrizes.get(i).imprimir();
                         
-                        System.out.println();
                     }
-                    System.out.println("----------------------------------------");
+                    
                     break;
                 case "3":
-                    //menu com as demais operações
+                    if(matrizes.size() <= 2){
+
+                    String menu2 = "0";
+
+                    while (!menu2.equals("4")) {
+                        System.out.println("---------- MENU OPERAÇÕES ----------");
+                        System.out.printf("\n1 - Soma de Matrizes" + "\n2 - Subtração de Matrizes" + "\n3 - Multiplicação de Matrizes"+ "\n4 - Divisão de Matrizes"+ "\n5 - Operações mais complexas" + "\n6 - Voltar" + "\nDigite a opção que deseja: ");
+
+                        menu2 = leitor.nextLine();
+
+                        switch (menu2) {
+                            case "1":
+                                System.out.println("Soma!");
+                                break;
+                        
+                            default:
+                                System.out.println("Valor inválido! Tente novamente");
+                                break;
+                        }
+                        
+                    }
+                    }else{
+                        System.out.println("Você precisa ter pelo menos duas matrizes cadastradas!");
+                        break;
+                    }
+
                     break;
+
+                case "4":
+                    System.out.println("Saindo... Adeus :( ");
+                    break;
+
                 default:
                     System.out.println("\nValor inválido! Tente novamente\n");
                     break;
