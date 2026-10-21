@@ -30,5 +30,51 @@ public class Matriz {
         return matriz[0].length;
     }
 
+    public Matriz somar(Matriz outra){
+        if(getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()){
+            return null;
+        }
+
+        Matriz resultado = new Matriz(getLinhas(), getColunas());
+
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                resultado.matriz[i][j] = matriz[i][j] + outra.matriz[i][j];
+            }
+        }
+        return resultado;
+    }
+
+    public Matriz subtrair(Matriz outra){
+        if(getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()){
+            return null;
+        }
+
+        Matriz resultado = new Matriz(getLinhas(), getColunas());
+
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[i].length; j++) {
+                resultado.matriz[i][j] = matriz[i][j] - outra.matriz[i][j];
+            }
+        }
+        return resultado;
+    }
+
+    public Matriz multiplicar(Matriz outra){
+        if(getLinhas() != outra.getColunas()){
+            return null;
+        }
+
+        Matriz resultado = new Matriz(getLinhas(), getColunas());
+
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < outra.getColunas(); j++) {
+                for (int k = 0; k < getColunas(); k++) {
+                    resultado.matriz[i][j] += matriz[i][k] * outra.matriz[k][j];
+                }
+            }
+        }
+        return resultado;
+    }
     
 }
