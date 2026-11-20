@@ -1,0 +1,52 @@
+CALCULADORA DE MATRIZES
+Trabalho de Desenvolvimento de Software - Análise e Desenvolvimento de Sistemas
+
+INTEGRANTE
+- Natan Gabriel Lopes
+
+REQUISITOS
+- Java JDK 8 ou superior instalado (comandos javac e java no terminal)
+
+COMO COMPILAR
+Abra o terminal dentro da pasta do projeto e rode:
+
+    javac -encoding UTF-8 Main.java Matriz.java
+
+COMO EXECUTAR
+Na mesma pasta, rode:
+
+    java Main
+
+O programa lê automaticamente o arquivo matrizes.txt, que precisa estar na
+mesma pasta de onde o comando foi executado.
+
+FORMATO DO matrizes.txt
+Cada matriz começa com uma linha contendo só a letra do nome. Embaixo vêm
+as linhas da matriz, com os valores separados por espaço. Uma linha em
+branco separa uma matriz da outra. Linhas começando com # são ignoradas.
+
+    A
+    3 5
+    1 -2
+
+    B
+    -1 7
+    4 0
+
+MENU
+Menu principal:
+  [1] Adicionar Matriz (importar de outro arquivo ou digitar manualmente)
+  [2] Visualizar Matrizes
+  [3] Operações com Matrizes
+  [0] Sair
+Operações com Matrizes:
+  [1] Soma  [2] Subtração  [3] Multiplicação  [4] Operações mais complexas
+Operações mais complexas:
+  [1] Determinante  [2] Transposta  [3] Inversa  [4] Escalonamento
+
+ARQUIVOS
+- Main.java     -> menu, leitura do arquivo e interação com o usuário
+- Matriz.java   -> classe da matriz e todas as operações
+- matrizes.txt  -> matrizes de teste do enunciado
+
+Repositório: ver linkGithub.txt

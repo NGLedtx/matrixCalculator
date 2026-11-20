@@ -1,110 +1,126 @@
 import java.util.Scanner;
 
 public class Matriz {
-    // Dados da matriz armazenados em linhas e colunas.
+    // Letra que identifica a matriz
+    private char nome;
+    // Valores da matriz
     private double[][] matriz;
-    // Tolerância usada para considerar valores muito próximos de zero.
+
+    // Tolerância para considerar um valor como zero
     private static final double EPSILON = 1e-10;
 
-    public Matriz(int linhas, int colunas){
-        // Cria uma matriz vazia preenchida inicialmente com zeros.
+    public Matriz(char nome, int linhas, int colunas) {
+        this.nome = nome;
         matriz = new double[linhas][colunas];
-
     }
 
-    public void preencher(Scanner leitor, char nomeMatriz){
-        // Percorre todas as posições para solicitar os valores ao usuário.
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
-                System.out.printf("Digite o valor da posição %c%d%d: ",Character.toLowerCase(nomeMatriz), i+1, j+1);
-                matriz[i][j] = Integer.parseInt(leitor.nextLine());
-            }
-        }
+    public char getNome() {
+        return nome;
     }
 
-    public void definirValor(int linha, int coluna, int valor) { 
-        // Define um valor em uma posição específica da matriz.
-        matriz[linha][coluna] = valor;
-    } 
-
-    public void imprimir(){
-        // Percorre as linhas e exibe cada valor entre barras.
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
-                // Trata números muito próximos de zero como zero.
-                if (Math.abs(matriz[i][j]) < EPSILON) {
-                    System.out.print("| 0 |");
-                } else if (Math.abs(matriz[i][j] - Math.rint(matriz[i][j])) < EPSILON) {
-                    // Exibe números inteiros sem casas decimais.
-                    System.out.printf("| %.0f |", matriz[i][j]);
-                } else {
-                    // Exibe números decimais com três casas.
-                    System.out.printf("| %.3f |", matriz[i][j]);
-                }
-            }
-            System.out.println();
-        }
-    }
-    public int getLinhas(){
-        // Retorna a quantidade de linhas.
+    public int getLinhas() {
         return matriz.length;
     }
-    public int getColunas(){
-        // Retorna a quantidade de colunas da primeira linha.
+
+    public int getColunas() {
         return matriz[0].length;
     }
 
     public double getValor(int linha, int coluna) {
-        // Retorna o valor armazenado em uma posição.
         return matriz[linha][coluna];
     }
 
-    public Matriz somar(Matriz outra){
-        // A soma só é possível quando as dimensões são iguais.
-        if(getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()){
-            return null;
+    public void definirValor(int linha, int coluna, double valor) {
+        matriz[linha][coluna] = valor;
+    }
+
+    public boolean isQuadrada() {
+        return getLinhas() == getColunas();
+    }
+
+    // Preenche a matriz pelo teclado
+    public void preencher(Scanner leitor) {
+        for (int i = 0; i < getLinhas(); i++) {
+            for (int j = 0; j < getColunas(); j++) {
+                while (true) {
+                    System.out.printf("Digite o valor da posição %c%d%d: ", Character.toLowerCase(nome), i + 1, j + 1);
+                    try {
+                        matriz[i][j] = Double.parseDouble(leitor.nextLine().trim().replace(',', '.'));
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Valor inválido, digite um número.");
+                    }
+                }
+            }
+        }
+    }
+
+    // Exibe a matriz na tela
+    public void imprimir() {
+        int largura = 1;
+        for (double[] linha : matriz) {
+            for (double valor : linha) {
+                largura = Math.max(largura, formatar(valor).length());
+            }
         }
 
-        Matriz resultado = new Matriz(getLinhas(), getColunas());
+        for (double[] linha : matriz) {
+            StringBuilder sb = new StringBuilder("[ ");
+            for (double valor : linha) {
+                sb.append(String.format("%" + largura + "s ", formatar(valor)));
+            }
+            sb.append("]");
+            System.out.println(sb);
+        }
+    }
 
-        // Soma elemento a elemento.
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
+    // Formata o número para exibição
+    private String formatar(double valor) {
+        if (Math.abs(valor) < EPSILON) {
+            return "0";
+        }
+        if (Math.abs(valor - Math.rint(valor)) < EPSILON) {
+            return String.format("%.0f", valor);
+        }
+        return String.format("%.3f", valor);
+    }
+
+    // Soma duas matrizes
+    public Matriz somar(Matriz outra) {
+        if (getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()) {
+            return null;
+        }
+        Matriz resultado = new Matriz('R', getLinhas(), getColunas());
+        for (int i = 0; i < getLinhas(); i++) {
+            for (int j = 0; j < getColunas(); j++) {
                 resultado.matriz[i][j] = matriz[i][j] + outra.matriz[i][j];
             }
         }
         return resultado;
     }
 
-    public Matriz subtrair(Matriz outra){
-        // A subtração só é possível quando as dimensões são iguais.
-        if(getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()){
+    // Subtrai duas matrizes
+    public Matriz subtrair(Matriz outra) {
+        if (getLinhas() != outra.getLinhas() || getColunas() != outra.getColunas()) {
             return null;
         }
-
-        Matriz resultado = new Matriz(getLinhas(), getColunas());
-
-        // Subtrai elemento a elemento.
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
+        Matriz resultado = new Matriz('R', getLinhas(), getColunas());
+        for (int i = 0; i < getLinhas(); i++) {
+            for (int j = 0; j < getColunas(); j++) {
                 resultado.matriz[i][j] = matriz[i][j] - outra.matriz[i][j];
             }
         }
         return resultado;
     }
 
-    public Matriz multiplicar(Matriz outra){
-        // A quantidade de colunas da primeira deve ser igual às linhas da segunda.
-        if(getColunas() != outra.getLinhas()){
+    // Multiplica duas matrizes
+    public Matriz multiplicar(Matriz outra) {
+        if (getColunas() != outra.getLinhas()) {
             return null;
         }
-
-        Matriz resultado = new Matriz(getLinhas(), outra.getColunas());
-
-        // Percorre linhas da primeira matriz e colunas da segunda.
-        for (int i = 0; i < matriz.length; i++) {
+        Matriz resultado = new Matriz('R', getLinhas(), outra.getColunas());
+        for (int i = 0; i < getLinhas(); i++) {
             for (int j = 0; j < outra.getColunas(); j++) {
-                // Soma o produto dos elementos correspondentes.
                 for (int k = 0; k < getColunas(); k++) {
                     resultado.matriz[i][j] += matriz[i][k] * outra.matriz[k][j];
                 }
@@ -112,245 +128,189 @@ public class Matriz {
         }
         return resultado;
     }
-    public Matriz transposta(){
-        // A transposta troca linhas por colunas.
-        Matriz resultado = new Matriz(getColunas(), getLinhas());
 
-        for (int i = 0; i < matriz.length; i++) {
-            for (int j = 0; j < matriz[i].length; j++) {
+    // Calcula a transposta
+    public Matriz transposta() {
+        Matriz resultado = new Matriz('T', getColunas(), getLinhas());
+        for (int i = 0; i < getLinhas(); i++) {
+            for (int j = 0; j < getColunas(); j++) {
                 resultado.matriz[j][i] = matriz[i][j];
             }
         }
         return resultado;
     }
-    public Matriz determinanteSarrus(){
-        // Regra de Sarrus aceita matrizes quadradas de até ordem 3.
-        if(getLinhas() != getColunas() || getLinhas() > 3){
-            return null;
-        }
 
-        Matriz resultado = new Matriz(1, 1);
-        if (getLinhas() == 1) {
-            // O determinante de uma matriz 1x1 é seu único valor.
-            resultado.matriz[0][0] = matriz[0][0];
-        } else if (getLinhas() == 2) {
-            // Calcula o determinante pela diferença dos produtos diagonais.
-            resultado.matriz[0][0] =
-                matriz[0][0] * matriz[1][1] - matriz[0][1] * matriz[1][0];
-        } else {
-            // Soma os produtos das diagonais principais e secundárias.
-            resultado.matriz[0][0] =
-                matriz[0][0] * matriz[1][1] * matriz[2][2]
-                    + matriz[0][1] * matriz[1][2] * matriz[2][0]
-                    + matriz[0][2] * matriz[1][0] * matriz[2][1]
-                    - matriz[0][2] * matriz[1][1] * matriz[2][0]
-                    - matriz[0][0] * matriz[1][2] * matriz[2][1]
-                    - matriz[0][1] * matriz[1][0] * matriz[2][2];
+    // Calcula o determinante (Sarrus até 3x3, Laplace acima)
+    public double determinante() {
+        if (getLinhas() <= 3) {
+            return determinanteSarrus();
         }
-        return resultado;
+        return determinanteLaplace(matriz);
     }
 
-    public Matriz determinanteLaplace(){
-        // O determinante só pode ser calculado em matrizes quadradas.
-        if(getLinhas() != getColunas()){
-            return null;
+    // Determinante pela regra de Sarrus
+    private double determinanteSarrus() {
+        double[][] m = matriz;
+        if (m.length == 1) {
+            return m[0][0];
         }
-
-        Matriz resultado = new Matriz(1, 1);
-        resultado.matriz[0][0] = calcularDeterminante(matriz);
-        return resultado;
+        if (m.length == 2) {
+            return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+        }
+        return m[0][0] * m[1][1] * m[2][2]
+             + m[0][1] * m[1][2] * m[2][0]
+             + m[0][2] * m[1][0] * m[2][1]
+             - m[0][2] * m[1][1] * m[2][0]
+             - m[0][0] * m[1][2] * m[2][1]
+             - m[0][1] * m[1][0] * m[2][2];
     }
 
-    private double calcularDeterminante(double[][] matrizAtual) {
-        int tamanho = matrizAtual.length;
-
-        // Caso base para uma matriz 1x1.
-        if (tamanho == 1) {
-            return matrizAtual[0][0];
+    // Determinante por Laplace
+    private double determinanteLaplace(double[][] m) {
+        int n = m.length;
+        if (n == 1) {
+            return m[0][0];
+        }
+        if (n == 2) {
+            return m[0][0] * m[1][1] - m[0][1] * m[1][0];
         }
 
-        // Caso base para uma matriz 2x2.
-        if (tamanho == 2) {
-            return matrizAtual[0][0] * matrizAtual[1][1]
-                - matrizAtual[0][1] * matrizAtual[1][0];
-        }
-
-        double determinante = 0;
-
-        // Percorre a primeira linha e cria uma matriz menor para cada coluna.
-        for (int coluna = 0; coluna < tamanho; coluna++) {
-            double[][] menor = new double[tamanho - 1][tamanho - 1];
-
-            // Copia os valores restantes para a matriz menor.
-            for (int linhaMenor = 1; linhaMenor < tamanho; linhaMenor++) {
-                int indiceMenor = 0;
-                for (int colunaMenor = 0; colunaMenor < tamanho; colunaMenor++) {
-                    if (colunaMenor == coluna) {
-                        continue;
+        double det = 0;
+        for (int coluna = 0; coluna < n; coluna++) {
+            double[][] menor = new double[n - 1][n - 1];
+            for (int i = 1; i < n; i++) {
+                int k = 0;
+                for (int j = 0; j < n; j++) {
+                    if (j != coluna) {
+                        menor[i - 1][k++] = m[i][j];
                     }
-                    menor[linhaMenor - 1][indiceMenor] = matrizAtual[linhaMenor][colunaMenor];
-                    indiceMenor++;
                 }
             }
-
-            // Alterna o sinal positivo e negativo de cada termo.
             int sinal = (coluna % 2 == 0) ? 1 : -1;
-            determinante += sinal * matrizAtual[0][coluna] * calcularDeterminante(menor);
+            det += sinal * m[0][coluna] * determinanteLaplace(menor);
         }
-
-        return determinante;
+        return det;
     }
 
+    // Escalona a matriz (Gauss)
     public Matriz escalonar() {
-        // Trabalha em uma cópia para não modificar a matriz original.
-        double[][] trabalho = copiarDados();
-        int linhas = trabalho.length;
-        int colunas = trabalho[0].length;
+        double[][] m = copiarDados();
+        int linhas = m.length;
+        int colunas = m[0].length;
         int linhaPivo = 0;
 
-        // Percorre as colunas procurando pivôs não nulos.
         for (int coluna = 0; coluna < colunas && linhaPivo < linhas; coluna++) {
-            int linhaEscolhida = linhaPivo;
-
-            // Escolhe a linha com maior valor absoluto para o pivô.
-            for (int linha = linhaPivo + 1; linha < linhas; linha++) {
-                if (Math.abs(trabalho[linha][coluna]) > Math.abs(trabalho[linhaEscolhida][coluna])) {
-                    linhaEscolhida = linha;
-                }
+            int troca = linhaPivo;
+            while (troca < linhas && Math.abs(m[troca][coluna]) < EPSILON) {
+                troca++;
             }
-
-            // Não existe pivô nesta coluna.
-            if (Math.abs(trabalho[linhaEscolhida][coluna]) < EPSILON) {
+            if (troca == linhas) {
                 continue;
             }
+            trocarLinhas(m, linhaPivo, troca);
 
-            // Troca a linha atual pela linha que contém o melhor pivô.
-            double[] temporaria = trabalho[linhaPivo];
-            trabalho[linhaPivo] = trabalho[linhaEscolhida];
-            trabalho[linhaEscolhida] = temporaria;
-
-            // Divide a linha do pivô para transformar o pivô em 1.
-            double pivo = trabalho[linhaPivo][coluna];
-            for (int j = 0; j < colunas; j++) {
-                trabalho[linhaPivo][j] /= pivo;
-            }
-
-            // Zera o elemento desta coluna nas demais linhas.
-            for (int linha = 0; linha < linhas; linha++) {
-                if (linha == linhaPivo) {
-                    continue;
-                }
-                double fator = trabalho[linha][coluna];
-                if (Math.abs(fator) < EPSILON) {
-                    continue;
-                }
-                for (int j = 0; j < colunas; j++) {
-                    trabalho[linha][j] -= fator * trabalho[linhaPivo][j];
+            for (int i = linhaPivo + 1; i < linhas; i++) {
+                double fator = m[i][coluna] / m[linhaPivo][coluna];
+                for (int j = coluna; j < colunas; j++) {
+                    m[i][j] -= fator * m[linhaPivo][j];
                 }
             }
-
             linhaPivo++;
         }
-
-        return criarMatriz(trabalho);
+        return criarMatriz(m);
     }
 
-    public Matriz escalonamento() {
-        // Nome alternativo para chamar o método de escalonamento.
-        return escalonar();
+    // Escalona na forma reduzida (Gauss-Jordan)
+    public Matriz escalonarReduzida() {
+        double[][] m = copiarDados();
+        reduzir(m, getColunas());
+        return criarMatriz(m);
     }
 
+    // Calcula a inversa
     public Matriz inversa() {
-        // Apenas matrizes quadradas podem possuir inversa.
-        if (getLinhas() != getColunas()) {
+        if (!isQuadrada()) {
+            return null;
+        }
+        int n = getLinhas();
+        double[][] aumentada = new double[n][2 * n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                aumentada[i][j] = matriz[i][j];
+            }
+            aumentada[i][n + i] = 1;
+        }
+
+        int pivos = reduzir(aumentada, n);
+        if (pivos < n) {
             return null;
         }
 
-        int tamanho = getLinhas();
-        // Cria uma matriz aumentada: [matriz original | matriz identidade].
-        double[][] aumentada = new double[tamanho][tamanho * 2];
-
-        for (int linha = 0; linha < tamanho; linha++) {
-            for (int coluna = 0; coluna < tamanho; coluna++) {
-                aumentada[linha][coluna] = matriz[linha][coluna];
-                // A parte direita recebe 1 na diagonal e 0 nas demais posições.
-                aumentada[linha][coluna + tamanho] = (linha == coluna) ? 1.0 : 0.0;
+        double[][] inv = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                inv[i][j] = aumentada[i][n + j];
             }
         }
+        return criarMatriz(inv);
+    }
 
+    // Aplica Gauss-Jordan e retorna a quantidade de pivôs
+    private int reduzir(double[][] m, int colunasPivo) {
+        int linhas = m.length;
+        int totalColunas = m[0].length;
         int linhaPivo = 0;
-        // Aplica eliminação de Gauss-Jordan em todas as colunas.
-        for (int coluna = 0; coluna < tamanho; coluna++) {
-            int linhaEscolhida = linhaPivo;
 
-            // Busca o maior pivô disponível na coluna.
-            for (int linha = linhaPivo + 1; linha < tamanho; linha++) {
-                if (Math.abs(aumentada[linha][coluna]) > Math.abs(aumentada[linhaEscolhida][coluna])) {
-                    linhaEscolhida = linha;
+        for (int coluna = 0; coluna < colunasPivo && linhaPivo < linhas; coluna++) {
+            int melhor = linhaPivo;
+            for (int i = linhaPivo + 1; i < linhas; i++) {
+                if (Math.abs(m[i][coluna]) > Math.abs(m[melhor][coluna])) {
+                    melhor = i;
                 }
             }
+            if (Math.abs(m[melhor][coluna]) < EPSILON) {
+                continue;
+            }
+            trocarLinhas(m, linhaPivo, melhor);
 
-            // Nenhum pivô significa que a matriz não possui inversa.
-            if (Math.abs(aumentada[linhaEscolhida][coluna]) < EPSILON) {
-                return null;
+            double pivo = m[linhaPivo][coluna];
+            for (int j = 0; j < totalColunas; j++) {
+                m[linhaPivo][j] /= pivo;
             }
 
-            // Troca linhas para posicionar o pivô na diagonal.
-            double[] temporaria = aumentada[linhaPivo];
-            aumentada[linhaPivo] = aumentada[linhaEscolhida];
-            aumentada[linhaEscolhida] = temporaria;
-
-            // Divide toda a linha pelo valor do pivô.
-            double pivo = aumentada[linhaPivo][coluna];
-            for (int j = 0; j < tamanho * 2; j++) {
-                aumentada[linhaPivo][j] /= pivo;
-            }
-
-            // Zera o restante da coluna em todas as linhas.
-            for (int linha = 0; linha < tamanho; linha++) {
-                if (linha == linhaPivo) {
+            for (int i = 0; i < linhas; i++) {
+                if (i == linhaPivo) {
                     continue;
                 }
-                double fator = aumentada[linha][coluna];
-                if (Math.abs(fator) < EPSILON) {
-                    continue;
-                }
-                for (int j = 0; j < tamanho * 2; j++) {
-                    aumentada[linha][j] -= fator * aumentada[linhaPivo][j];
+                double fator = m[i][coluna];
+                for (int j = 0; j < totalColunas; j++) {
+                    m[i][j] -= fator * m[linhaPivo][j];
                 }
             }
             linhaPivo++;
         }
-
-        // Copia a parte direita da matriz aumentada como resultado.
-        double[][] inversa = new double[tamanho][tamanho];
-        for (int linha = 0; linha < tamanho; linha++) {
-            for (int coluna = 0; coluna < tamanho; coluna++) {
-                inversa[linha][coluna] = aumentada[linha][coluna + tamanho];
-            }
-        }
-        return criarMatriz(inversa);
+        return linhaPivo;
     }
 
-    public Matriz inversaMatriz() {
-        // Método auxiliar com outro nome possível.
-        return inversa();
+    // Troca duas linhas
+    private void trocarLinhas(double[][] m, int a, int b) {
+        double[] aux = m[a];
+        m[a] = m[b];
+        m[b] = aux;
     }
 
+    // Copia os valores da matriz
     private double[][] copiarDados() {
-        // Cria uma cópia dos dados para preservar a matriz original.
-        double[][] copia = new double[matriz.length][matriz[0].length];
-        for (int linha = 0; linha < matriz.length; linha++) {
-            System.arraycopy(matriz[linha], 0, copia[linha], 0, matriz[linha].length);
+        double[][] copia = new double[getLinhas()][];
+        for (int i = 0; i < getLinhas(); i++) {
+            copia[i] = matriz[i].clone();
         }
         return copia;
     }
 
     private Matriz criarMatriz(double[][] dados) {
-        // Converte um vetor bidimensional em um objeto Matriz.
-        Matriz nova = new Matriz(dados.length, dados[0].length);
+        Matriz nova = new Matriz(nome, dados.length, dados[0].length);
         nova.matriz = dados;
         return nova;
     }
-    
 }
